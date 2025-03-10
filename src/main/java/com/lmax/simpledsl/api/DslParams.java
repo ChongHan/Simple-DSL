@@ -64,6 +64,27 @@ public interface DslParams extends DslValues
         return new DslParamsParser().parse(args, arguments);
     }
 
+    /**
+     * Create new {@link DslParams} from multiline args. Useful for passing java text blocks.
+     *
+     * <pre>
+     *     publicAPI.placeOrder("""
+     *         FTSE100
+     *         side: buy
+     *         quantity: 10
+     *         price: 5000
+     *         expectedStatus: UNMATCHED
+     *         """);
+     * </pre>
+     *
+     * @param multilineArgs the values
+     * @param arguments the {@link DslArg multilineArgs}
+     * @return the new {@link DslParams}
+     */
+    static DslParams create(String multilineArgs, DslArg... arguments)
+    {
+        return new DslParamsParser().parse(multilineArgs.split(System.lineSeparator()), arguments);
+    }
 
     /**
      * A shorthand way to create a {@link DslParams} instance that accepts a single required parameter and return the
