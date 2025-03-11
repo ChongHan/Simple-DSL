@@ -22,6 +22,7 @@ import com.lmax.simpledsl.api.OptionalArg;
 import com.lmax.simpledsl.api.RepeatingArgGroup;
 import com.lmax.simpledsl.api.RepeatingGroup;
 import com.lmax.simpledsl.api.RequiredArg;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -934,6 +935,46 @@ class DslParamsParserTest
         );
 
         assertEquals("Unexpected ambiguous argument 1", exception.getMessage());
+    }
+
+    @Test
+    public void canCreateDslParamsFromMultilineTextBlock()
+    {
+        final DslParams fromVarargs = DslParams.create(new String[]{"arg1: ags", "arg2: dan", "arg3: simon"},
+                new RequiredArg("arg1"),
+                new RequiredArg("arg2"),
+                new RequiredArg("arg3"));
+
+        final DslParams fromMultiline = DslParams.create("arg1: ags\narg2: dan\narg3: simon\n",
+                new RequiredArg("arg1"),
+                new RequiredArg("arg2"),
+                new RequiredArg("arg3"));
+
+        final DslParams fromMultilineWindows = DslParams.create("arg1: ags\r\narg2: dan\r\narg3: simon\r\n",
+                new RequiredArg("arg1"),
+                new RequiredArg("arg2"),
+                new RequiredArg("arg3"));
+
+        final DslParams fromMultilineMac = DslParams.create("arg1: ags\rarg2: dan\rarg3: simon\r",
+                new RequiredArg("arg1"),
+                new RequiredArg("arg2"),
+                new RequiredArg("arg3"));
+
+        assertEquals("ags", fromMultiline.value("arg1"));
+        assertEquals("dan", fromMultiline.value("arg2"));
+        assertEquals("simon", fromMultiline.value("arg3"));
+
+        assertEquals("ags", fromMultilineWindows.value("arg1"));
+        assertEquals("dan", fromMultilineWindows.value("arg2"));
+        assertEquals("simon", fromMultilineWindows.value("arg3"));
+
+        assertEquals("ags", fromMultilineMac.value("arg1"));
+        assertEquals("dan", fromMultilineMac.value("arg2"));
+        assertEquals("simon", fromMultilineMac.value("arg3"));
+
+        assertEquals(fromVarargs.value("arg1"), fromMultiline.value("arg1"));
+        assertEquals(fromVarargs.value("arg2"), fromMultiline.value("arg2"));
+        assertEquals(fromVarargs.value("arg3"), fromMultiline.value("arg3"));
     }
 
     private enum PossiblePets
