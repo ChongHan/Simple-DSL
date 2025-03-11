@@ -65,7 +65,7 @@ public interface DslParams extends DslValues
     }
 
     /**
-     * Create new {@link DslParams} from multiline args. Useful for passing java text blocks.
+     * Create new {@link DslParams} from multiline args. Useful for passing Java text blocks.
      *
      * <pre>
      *     publicAPI.placeOrder("""
@@ -83,7 +83,7 @@ public interface DslParams extends DslValues
      */
     static DslParams create(String multilineArgs, DslArg... arguments)
     {
-        return new DslParamsParser().parse(multilineArgs.split(System.lineSeparator()), arguments);
+        return new DslParamsParser().parse(multilineArgs.split("\\R"), arguments);
     }
 
     /**
